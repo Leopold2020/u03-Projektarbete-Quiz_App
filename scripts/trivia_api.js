@@ -93,7 +93,7 @@ export async function getQuestions(
       } else {
         const processedQuestions = await questions.json();
 
-        let test = processedQuestions.results.map((object) => {
+        let decodedQuestions = processedQuestions.results.map((object) => {
           return {
             type: atob(object.type),
             difficulty: atob(object.difficulty),
@@ -103,7 +103,7 @@ export async function getQuestions(
           }
         })
 
-        return processedQuestions.results, test;
+        return decodedQuestions;
       }
     } else {
       throw new Error("Wrong type sent");
