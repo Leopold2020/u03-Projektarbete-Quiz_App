@@ -38,6 +38,8 @@ function startQuestion() {
 }
 
 function renderCurrentQuestion() {
+  updateQuestionIndexDisplay();
+
   const question = quizState.questions[quizState.currentQuestionIndex];
   document.getElementById("question").textContent = question.question;
 
