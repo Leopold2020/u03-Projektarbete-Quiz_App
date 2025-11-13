@@ -1,0 +1,95 @@
+:root {
+  --background-color: #9055ef;
+  --text-color: #f5f5f5;
+
+  --button-color: #71a2fd;
+  --button-text-color: #f5f5f5;
+  --button-border-color: #000;
+  --button-hover-color: #5c85e5;
+
+  --select-color: #f5f5f5;
+  --select-hover-color: #d3d3d3;
+
+  --border-radius-rounded: 100vh;
+
+  --font-poppins: "Poppins", system-ui, sans-serif;
+
+  --box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+* {
+  /* Reset default styles */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: var(--font-poppins);
+}
+
+.hero {
+  display: grid;
+  place-content: center;
+  min-height: 100vh;
+
+  .container {
+    max-width: 500px;
+    width: 100%;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+
+    form {
+      display: grid;
+
+      :not(select) {
+        margin-top: 2rem;
+      }
+
+      label {
+        font-size: 1.2rem;
+        padding-bottom: 0.5rem;
+      }
+
+      select {
+        border-radius: var(--border-radius-rounded);
+        box-shadow: var(--box-shadow);
+        border: 2px solid var(--button-border-color);
+        background-color: #f5f5f5;
+
+        padding: 0.5rem 1rem;
+        font-size: 1.2rem;
+        font-family: inherit;
+
+        &:hover {
+          background-color: var(--select-hover-color);
+        }
+      }
+
+      button {
+        background-color: var(--button-color);
+        color: var(--button-text-color);
+        border: 2px solid var(--button-border-color);
+        border-radius: var(--border-radius-rounded);
+        padding: 0.5rem 1rem;
+        font-size: 1.2rem;
+        font-family: inherit;
+        font-weight: bold;
+
+        text-transform: uppercase;
+
+        box-shadow: var(--box-shadow);
+
+        &:hover {
+          background-color: var(--button-hover-color);
+        }
+      }
+    }
+  }
+}
