@@ -81,11 +81,11 @@ export async function getQuestions(
     ) {
       const questions = await fetch(
         `https://opentdb.com/api.php?amount=${amountOfQuestions ?? `10`}` +
-          (category ? `&category=` + category : ``) +
-          (questionsDifficulty ? `&difficulty=` + questionsDifficulty : ``) +
-          (answerType ? `&type=` + answerType : `&type=multiple`) +
-          `&encode=base64` +
-          (token ? `&token=` + token : ``)
+        (category ? '&category=' + category : '') +
+        (questionsDifficulty ? '&difficulty=' + questionsDifficulty : '') +
+        (answerType ? '&type=' + answerType : '&type=multiple') +
+        '&encode=base64' +
+        (token ? '&token=' + token : '')
       );
 
       if (!questions.ok) {
@@ -99,6 +99,7 @@ export async function getQuestions(
             difficulty: atob(object.difficulty),
             category: atob(object.category),
             question: atob(object.question),
+            correct_answer: atob(object.correct_answer),
             incorrect_answers: object.incorrect_answers.map(atob)
           }
         })
