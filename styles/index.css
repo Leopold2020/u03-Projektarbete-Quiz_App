@@ -1,0 +1,17 @@
+:root {
+  --background-color: #9055ef;
+}
+
+body {
+  background-color: var(--background-color);
+}
+
+.hero {
+  display: grid;
+  place-content: center;
+
+  h1 {
+    font-size: 6rem;
+    color: white;
+  }
+}
