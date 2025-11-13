@@ -9,11 +9,11 @@ getCategories()
       option.textContent = category.name;
       fragment.appendChild(option);
     });
-    document.getElementById("category").replaceChildren(fragment);
+    document.getElementById("category").appendChild(fragment);
   })
   .catch((error) => {
     const option = document.createElement("option");
     option.value = "";
-    option.textContent = "Failed to load categories";
-    document.getElementById("category").replaceChildren(option);
+    option.textContent = "Failed to load other categories";
+    document.getElementById("category").appendChild(option);
   });
