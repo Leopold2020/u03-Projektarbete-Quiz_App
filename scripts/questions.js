@@ -12,7 +12,6 @@ async function init() {
   // this should show before first question is shown
   updateQuestionIndexDisplay();
 
-  // get questions from API later
   quizState.questions = await trivia
     .getQuestions()
     .then((questions) => {
