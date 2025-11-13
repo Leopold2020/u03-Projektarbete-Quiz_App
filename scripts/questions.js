@@ -88,6 +88,17 @@ function handleAnswer(selectedAnswer) {
   }
 
   showQuestionFeedback();
+
+  nextQuestion();
+}
+
+function nextQuestion() {
+  quizState.currentQuestionIndex++;
+  if (quizState.currentQuestionIndex >= quizState.questions.length) {
+    showFinalScore();
+  } else {
+    renderCurrentQuestion();
+  }
 }
 
 function showQuestionFeedback() {
@@ -102,6 +113,11 @@ function showCorrectFeedback() {
 function showIncorrectFeedback() {
   //TODO: implement
   console.log("Incorrect!");
+}
+
+function showFinalScore() {
+  //TODO: implement
+  console.log("Final Score:", quizState.score);
 }
 
 function updateQuestionIndexDisplay() {
