@@ -28,7 +28,7 @@ function responseNumber(response) { // Not yet implamanted
   };
 };
 
-async function getToken(existingToken) {
+export async function getToken(existingToken) {
   try {
     if (existingToken != null && existingToken.length > 0) {
       const uppdateToken = await fetch(
@@ -50,7 +50,7 @@ async function getToken(existingToken) {
   }
 }
 
-async function getCategories() {
+export async function getCategories() {
   try {
     const categories = await fetch("https://opentdb.com/api_category.php");
 
@@ -65,7 +65,7 @@ async function getCategories() {
   }
 }
 
-async function getQuestions(
+export async function getQuestions(
   amountOfQuestions,
   category,
   questionsDifficulty,
