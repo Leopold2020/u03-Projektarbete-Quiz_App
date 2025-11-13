@@ -83,7 +83,8 @@ export async function getQuestions(
         `https://opentdb.com/api.php?amount=${amountOfQuestions ?? `10`}` +
           (category ? `&category=` + category : ``) +
           (questionsDifficulty ? `&difficulty=` + questionsDifficulty : ``) +
-          (answerType ? `&type=` + answerType : ``) +
+          (answerType ? `&type=` + answerType : `&type=multiple`) +
+          `&encode=base64` +
           (token ? `&token=` + token : ``)
       );
 
@@ -91,7 +92,18 @@ export async function getQuestions(
         throw new Error("Response did not succeed");
       } else {
         const processedQuestions = await questions.json();
-        return processedQuestions.results;
+
+        let test = processedQuestions.results.map((object) => {
+          return {
+            type: atob(object.type),
+            difficulty: atob(object.difficulty),
+            category: atob(object.category),
+            question: atob(object.question),
+            incorrect_answers: object.incorrect_answers.map(atob)
+          }
+        })
+
+        return processedQuestions.results, test;
       }
     } else {
       throw new Error("Wrong type sent");
