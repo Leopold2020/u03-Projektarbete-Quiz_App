@@ -53,7 +53,7 @@ function renderCurrentQuestion() {
     fragment.appendChild(answerElement);
   });
 
-  document.getElementById("answers").appendChild(fragment);
+  document.getElementById("answers").replaceChildren(fragment);
 }
 
 function createAnswerElement(answer) {
