@@ -13,7 +13,7 @@ async function init() {
   // this should show before first question is shown
   updateQuestionIndexDisplay();
 
-  quizState.settings = getQuizSettings();
+  quizState.settings = await getQuizSettings();
 
   quizState.questions = await trivia
     .getQuestions(
@@ -37,20 +37,36 @@ async function init() {
   startQuestion();
 }
 
-function getQuizSettings() {
+async function getQuizSettings() {
   // get selected category and difficulty from url bar
   const paramsString = window.location.search;
   const searchParams = new URLSearchParams(paramsString);
-  // redirect to main page if they dont exist
-  if (!(searchParams.has("category") && searchParams.has("difficulty"))) {
+  const category = searchParams.get("category");
+  const difficulty = searchParams.get("difficulty");
+  // redirect to main page if they don't exist or are invalid
+  if (!((await isValidCategory(category)) && isValidDifficulty(difficulty))) {
     window.location.replace("../index.html");
   }
+
   return {
     amountOfQuestions: 10,
-    category: searchParams.get("category"),
-    questionDifficulty: searchParams.get("difficulty"),
+    category: category,
+    questionDifficulty: difficulty,
     answerType: "multiple",
   };
+}
+
+async function isValidCategory(category) {
+  const allCategories = await trivia.getCategories();
+  return (
+    category === "" || // empty is any category
+    allCategories.some((element) => element.id === Number(category))
+  );
+}
+
+function isValidDifficulty(difficulty) {
+  const validDifficulties = ["", "easy", "medium", "hard"]; // empty is any difficulty
+  return validDifficulties.includes(difficulty);
 }
 
 function startQuestion() {
