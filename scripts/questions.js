@@ -7,6 +7,21 @@ const quizState = {
   settings: {},
 };
 
+// DOM-elements
+const countdownElement = document.getElementById("countdown");
+const countdownScreen = document.getElementById("countdown-screen");
+const questionScreen = document.getElementById("question-screen");
+const resultScreen = document.getElementById("result-screen");
+
+const questionElement = document.getElementById("question");
+//const answersList = document.getElementById("answers");
+const questionTimerElement = document.getElementById("question-timer");
+const progressBar = document.getElementById("progress-bar");
+
+const resultMessage = document.getElementById("result-message");
+const correctAnswerText = document.getElementById("correct-answer-text");
+const nextQuestionBtn = document.getElementById("next-question-btn");
+
 init();
 
 async function init() {
@@ -30,7 +45,7 @@ async function init() {
     });
 
   // setup event listener for answer clicks
-  document
+  const answersList = document
     .getElementById("answers")
     .addEventListener("click", handleAnswerClick);
 
@@ -74,6 +89,8 @@ function startQuestion() {
   renderCurrentQuestion();
 
   // start timer
+    startQuestionTimer(); 
+
 }
 
 function renderCurrentQuestion() {
@@ -93,6 +110,9 @@ function renderCurrentQuestion() {
   });
 
   document.getElementById("answers").replaceChildren(fragment);
+
+      startQuestionTimer(); 
+
 }
 
 function createAnswerElement(answer) {
@@ -111,6 +131,7 @@ function handleAnswerClick(event) {
   const selectedAnswer = event.target.closest(".answer");
   if (selectedAnswer != null) {
     handleAnswer(selectedAnswer);
+
   }
 }
 
@@ -127,7 +148,7 @@ function handleAnswer(selectedAnswer) {
   }
 
   showQuestionFeedback();
-
+  stopQuestionTimer();
   nextQuestion();
 }
 
@@ -165,6 +186,8 @@ function updateQuestionIndexDisplay() {
   console.log("Question Index:", quizState.currentQuestionIndex + 1);
 }
 
+handleTimeUp(); // Vad ska hända när tiden tar slut. 
+
 // Fisher-Yates shuffle algorithm
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -172,3 +195,86 @@ function shuffle(array) {
     [array[i], array[j]] = [array[j], array[i]];
   }
 }
+
+
+
+
+function startQuestionTimer() {
+  // reset
+  questionTimeLeft = QUESTION_DURATION;
+  questionTimerElement.textContent = questionTimeLeft;
+  progressBar.style.width = "100%";
+
+  // rensa gammal
+  if (questionTimerId) {
+    clearInterval(questionTimerId);
+  }
+
+  questionTimerId = setInterval(() => {
+    questionTimeLeft--;
+
+    if (questionTimeLeft < 0) {
+      questionTimeLeft = 0;
+    }
+
+    questionTimerElement.textContent = questionTimeLeft;
+
+    const progress = (questionTimeLeft / QUESTION_DURATION) * 100;
+    progressBar.style.width = progress + "%"; 
+
+    if (questionTimeLeft <= 0) {
+      clearInterval(questionTimerId);
+      questionTimerId = null;
+      handleTimeUp(); 
+    }
+  }, 1000);
+}
+
+function stopQuestionTimer() {
+  if (questionTimerId) {
+    clearInterval(questionTimerId);
+    questionTimerId = null;
+  }
+}
+
+// Countdown
+
+const QUESTION_DURATION = 20;
+let questionTimeLeft = QUESTION_DURATION;
+let questionTimerId = null;
+
+function showCountdownScreen() {
+  countdownScreen.classList.remove("hidden");
+  questionScreen.classList.add("hidden");
+}
+
+function showQuestionScreen() {
+  countdownScreen.classList.add("hidden");
+  questionScreen.classList.remove("hidden");
+}
+
+
+function startCountdown(seconds, callback) {
+  let counter = seconds;
+
+  // visa första värdet direkt
+  countdownElement.textContent = counter;
+
+  const interval = setInterval(() => {
+    counter--; // minska först
+
+    countdownElement.textContent = counter;
+
+    if (counter <= 0) {
+      clearInterval(interval);
+
+      if (typeof callback === "function") {
+        callback(); 
+      }
+    }
+  }, 1000);
+}
+
+
+startCountdown(5, showQuestionScreen);
+
