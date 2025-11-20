@@ -93,3 +93,11 @@ body {
     }
   }
 }
+
+.floating-ball {
+  position: absolute;
+  background-color: #640278;
+  aspect-ratio: 1;
+  border-radius: var(--border-radius-rounded);
+  z-index: -1;
+}
