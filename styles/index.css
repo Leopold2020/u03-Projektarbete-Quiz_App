@@ -93,3 +93,71 @@ body {
     }
   }
 }
+
+/* Countdown styles */
+
+.hero-countdown {
+  display: grid;
+  place-content: center;
+  min-height: 100vh;
+}
+
+.container-wrapper {
+  display:flex;  
+  flex-direction: column;
+  max-width: 500px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.counter {
+  font-size: 13rem;
+  text-align: center;
+  font-weight: bold;
+}
+.counter-title {
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.counter-container {
+  background-color: var(--button-hover-color);
+  border-radius: 150px;
+  border: 7px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 300px;
+  height: 300px;
+}
+
+/* Progress bar styles */
+.question-timer-wrapper {
+  margin-top: 1.5rem;
+}
+
+.progress-wrapper {
+  width: 100%;
+  max-width: 400px;      
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 100%;
+  background-color: #71a2fd;
+  transition: width 0.2s linear;
+}
+
+
+
+.hidden {
+  display: none;
+}
