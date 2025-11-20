@@ -4,6 +4,7 @@ const quizState = {
   currentQuestionIndex: 0,
   score: 0,
   questions: [],
+  settings: {},
 };
 
 init();
@@ -12,8 +13,15 @@ async function init() {
   // this should show before first question is shown
   updateQuestionIndexDisplay();
 
+  quizState.settings = await getQuizSettings();
+
   quizState.questions = await trivia
-    .getQuestions()
+    .getQuestions(
+      quizState.settings.amountOfQuestions,
+      quizState.settings.category,
+      quizState.settings.questionDifficulty,
+      quizState.settings.answerType,
+    )
     .then((questions) => {
       return questions;
     })
@@ -27,6 +35,38 @@ async function init() {
     .addEventListener("click", handleAnswerClick);
 
   startQuestion();
+}
+
+async function getQuizSettings() {
+  // get selected category and difficulty from url bar
+  const paramsString = window.location.search;
+  const searchParams = new URLSearchParams(paramsString);
+  const category = searchParams.get("category");
+  const difficulty = searchParams.get("difficulty");
+  // redirect to main page if they don't exist or are invalid
+  if (!((await isValidCategory(category)) && isValidDifficulty(difficulty))) {
+    window.location.replace("../index.html");
+  }
+
+  return {
+    amountOfQuestions: 10,
+    category: category,
+    questionDifficulty: difficulty,
+    answerType: "multiple",
+  };
+}
+
+async function isValidCategory(category) {
+  const allCategories = await trivia.getCategories();
+  return (
+    category === "" || // empty is any category
+    allCategories.some((element) => element.id === Number(category))
+  );
+}
+
+function isValidDifficulty(difficulty) {
+  const validDifficulties = ["", "easy", "medium", "hard"]; // empty is any difficulty
+  return validDifficulties.includes(difficulty);
 }
 
 function startQuestion() {
