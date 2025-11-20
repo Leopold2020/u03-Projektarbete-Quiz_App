@@ -4,6 +4,7 @@ const quizState = {
   currentQuestionIndex: 0,
   score: 0,
   questions: [],
+  settings: {},
 };
 
 init();
@@ -12,8 +13,15 @@ async function init() {
   // this should show before first question is shown
   updateQuestionIndexDisplay();
 
+  quizState.settings = getQuizSettings();
+
   quizState.questions = await trivia
-    .getQuestions()
+    .getQuestions(
+      quizState.settings.amountOfQuestions,
+      quizState.settings.category,
+      quizState.settings.questionDifficulty,
+      quizState.settings.answerType,
+    )
     .then((questions) => {
       return questions;
     })
@@ -27,6 +35,22 @@ async function init() {
     .addEventListener("click", handleAnswerClick);
 
   startQuestion();
+}
+
+function getQuizSettings() {
+  // get selected category and difficulty from url bar
+  const paramsString = window.location.search;
+  const searchParams = new URLSearchParams(paramsString);
+  // redirect to main page if they dont exist
+  if (!(searchParams.has("category") && searchParams.has("difficulty"))) {
+    window.location.replace("../index.html");
+  }
+  return {
+    amountOfQuestions: 10,
+    category: searchParams.get("category"),
+    questionDifficulty: searchParams.get("difficulty"),
+    answerType: "multiple",
+  };
 }
 
 function startQuestion() {
