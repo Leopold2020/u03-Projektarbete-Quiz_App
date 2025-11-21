@@ -17,3 +17,19 @@ getCategories()
     option.textContent = "Failed to load other categories";
     document.getElementById("category").appendChild(option);
   });
+
+
+    document.getElementById("allow-cookies").addEventListener("click", () => {
+      gtag('consent', 'update', {
+        'analytics_storage': 'granted'
+      });
+      document.getElementById("consent-bar").style.display = "none";
+    });
+
+    document.getElementById("deny-cookies").addEventListener("click", () => {
+      gtag('consent', 'update', {
+        'analytics_storage': 'denied'
+      });
+      document.getElementById("consent-bar").style.display = "none";
+    });
+
