@@ -2,7 +2,7 @@ import * as trivia from "./trivia_api.js";
 
 const quizState = {
   currentQuestionIndex: 0,
-  score: 0,
+  correctQuestions: [],
   questions: [],
   settings: {},
 };
@@ -120,7 +120,7 @@ function handleAnswer(selectedAnswer) {
   const question = quizState.questions[quizState.currentQuestionIndex];
 
   if (selectedAnswer.dataset.answer === question.correct_answer) {
-    quizState.score++;
+    quizState.correctQuestions.push(question);
     showCorrectFeedback();
   } else {
     showIncorrectFeedback();
@@ -156,7 +156,21 @@ function showIncorrectFeedback() {
 
 function showFinalScore() {
   //TODO: implement
-  console.log("Final Score:", quizState.score);
+  const finalScore = calculateFinalScore();
+  console.log("Final Score:", finalScore);
+}
+
+function calculateFinalScore() {
+  const difficultyPoints = {
+    easy: 1,
+    medium: 2,
+    hard: 3,
+  };
+
+  return quizState.correctQuestions.reduce(
+    (acc, question) => acc + difficultyPoints[question.difficulty] ?? 1,
+    0,
+  );
 }
 
 function updateQuestionIndexDisplay() {
