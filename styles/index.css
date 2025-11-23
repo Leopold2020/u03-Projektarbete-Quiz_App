@@ -31,91 +31,6 @@ body {
   font-family: var(--font-poppins);
 }
 
-  .ball-blue {
-    position: absolute;
-    background-color: blue;
-    top: 0%;
-    left: 6%;
-    border-radius: 50%;
-    height: 100px;
-    width: 100px;
-    animation: moveUpDownLeft 5s ease-in-out infinite;
-    z-index: -1;
-  }
-
-    .ball-orange {
-    position: absolute;
-    background-color: rgb(255, 145, 0);
-    top: 0%;
-    left: 48.5%;
-    height: 75px;
-    width: 75px;
-    animation: moveUpDown 10s ease-in-out infinite;
-    z-index: -1;
-  }
-
-  .ball-green {
-    position: absolute;
-    background-color: rgb(5, 170, 5);
-    top: 0%;
-    left: 75%;
-    height: 130px;
-    width: 130px;
-    z-index: -1;
-    border-radius: 50%;
-    animation: moveUpDownLeft 7s ease-in-out infinite;
-  }
-
-  .ball-red {
-    background-color: rgb(255, 0, 0);
-    position: absolute;
-    top: 5%;
-    left: 0%;
-    height: 100px;
-    width: 100px;
-    z-index: -1;
-    border-radius: 50%;
-    animation: moveLeftRight 8s ease-in-out infinite;
-  }
-
-  .ball-yellow {
-    background-color: rgb(235, 220, 56);
-    position: absolute;
-    border-radius: 50%;
-    top: 65%;
-    height: 85px;
-    width: 85px;
-    z-index: -1;
-    animation: moveLeftRight 14s ease-in-out  infinite;
-  }
-
-  @keyframes moveUpDown {
-    0%, 100% {
-      transform: translateY(0px) rotate(0deg);
-    }
-    50% {
-      transform: translateY(800px) rotate(180deg);
-    }
-  }
-
-  @keyframes moveUpDownLeft {
-    0%, 100% {
-      transform: translateX(100px);
-    }
-    50% {
-      transform: translateY(740px);
-    }
-  }
-
-  @keyframes moveLeftRight {
-    0%, 50%, 100% {
-      transform: translateY(130px);
-    }
-    50% {
-      transform: translateX(1800px); 
-    }
-  }
-
 .hero {
   display: grid;
   place-content: center;
@@ -213,3 +128,11 @@ body {
     padding: 0.8rem 1.3rem;
     font-size: 1.3rem;
   }
+
+.floating-ball {
+  position: absolute;
+  background-color: #640278;
+  aspect-ratio: 1;
+  border-radius: var(--border-radius-rounded);
+  z-index: -1;
+}

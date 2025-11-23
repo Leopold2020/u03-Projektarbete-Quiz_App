@@ -41,13 +41,14 @@
         <div class="container">
           <img src="assets/vector/logo.svg" alt="Quiz App Logo" />
 
-          <form>
+          <form action="pages/questions.html">
             <label for="category">Category:</label>
-            <select id="category">
+            <select id="category" name="category">
               <option value="">All Categories</option>
             </select>
             <label for="difficulty">Difficulty:</label>
-            <select id="difficulty">
+            <select id="difficulty" name="difficulty">
+              <option value="">Random</option>
               <option value="easy">Easy</option>
               <option value="medium">Medium</option>
               <option value="hard">Hard</option>
