@@ -7,6 +7,22 @@ const quizState = {
   settings: {},
 };
 
+// DOM-elements
+const countdownElement = document.getElementById("countdown");
+const countdownScreen = document.getElementById("countdown-screen");
+const questionScreen = document.getElementById("question-screen");
+const resultScreen = document.getElementById("result-screen");
+
+const questionElement = document.getElementById("question");
+//const answersList = document.getElementById("answers");
+
+const questionTimerElement = document.getElementById("question-timer");
+const timerMeter = document.getElementById("timer-meter");
+
+const resultMessage = document.getElementById("result-message");
+const correctAnswerText = document.getElementById("correct-answer-text");
+const nextQuestionBtn = document.getElementById("next-question-btn");
+
 init();
 
 async function init() {
@@ -67,6 +83,11 @@ async function isValidCategory(category) {
 function isValidDifficulty(difficulty) {
   const validDifficulties = ["", "easy", "medium", "hard"]; // empty is any difficulty
   return validDifficulties.includes(difficulty);
+
+  startCountdown(5, () => {
+    showQuestionScreen();
+    startQuestion();
+  });
 }
 
 function startQuestion() {
@@ -74,6 +95,7 @@ function startQuestion() {
   renderCurrentQuestion();
 
   // start timer
+  startQuestionTimer();
 }
 
 function renderCurrentQuestion() {
@@ -93,6 +115,8 @@ function renderCurrentQuestion() {
   });
 
   document.getElementById("answers").replaceChildren(fragment);
+
+  startQuestionTimer();
 }
 
 function createAnswerElement(answer) {
@@ -165,6 +189,15 @@ function updateQuestionIndexDisplay() {
   console.log("Question Index:", quizState.currentQuestionIndex + 1);
 }
 
+function handleTimeUp() {
+  console.log("Tiden är slut!");
+  // Här kan du t.ex:
+  // - disabla svarsknappar
+  // - visa "Tiden är slut, klicka vidare"
+  // Just nu: gå direkt till nästa fråga:
+  nextQuestion();
+}
+
 // Fisher-Yates shuffle algorithm
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -172,3 +205,80 @@ function shuffle(array) {
     [array[i], array[j]] = [array[j], array[i]];
   }
 }
+
+function startQuestionTimer() {
+  questionTimeLeft = QUESTION_DURATION;
+  questionTimerElement.textContent = questionTimeLeft;
+
+  timerMeter.value = QUESTION_DURATION;
+
+  if (questionTimerId) {
+    clearInterval(questionTimerId);
+  }
+
+  questionTimerId = setInterval(() => {
+    questionTimeLeft--;
+
+    if (questionTimeLeft < 0) {
+      questionTimeLeft = 0;
+    }
+
+    questionTimerElement.textContent = questionTimeLeft;
+
+    timerMeter.value = questionTimeLeft;
+    const progress = (questionTimeLeft / QUESTION_DURATION) * 100;
+    progressBar.style.width = progress + "%";
+
+    if (questionTimeLeft <= 0) {
+      clearInterval(questionTimerId);
+      questionTimerId = null;
+      handleTimeUp();
+    }
+  }, 1000);
+}
+
+function stopQuestionTimer() {
+  if (questionTimerId) {
+    clearInterval(questionTimerId);
+    questionTimerId = null;
+  }
+}
+
+// Countdown
+
+const QUESTION_DURATION = 20;
+let questionTimeLeft = QUESTION_DURATION;
+let questionTimerId = null;
+
+function showCountdownScreen() {
+  countdownScreen.classList.remove("hidden");
+  questionScreen.classList.add("hidden");
+}
+
+function showQuestionScreen() {
+  countdownScreen.classList.add("hidden");
+  questionScreen.classList.remove("hidden");
+}
+
+function startCountdown(seconds, callback) {
+  let counter = seconds;
+
+  // visa första värdet direkt
+  countdownElement.textContent = counter;
+
+  const interval = setInterval(() => {
+    counter--; // minska först
+
+    countdownElement.textContent = counter;
+
+    if (counter <= 0) {
+      clearInterval(interval);
+
+      if (typeof callback === "function") {
+        callback();
+      }
+    }
+  }, 1000);
+}
+
+startCountdown(5, showQuestionScreen);

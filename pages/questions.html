@@ -13,5 +13,41 @@
       <p id="question">Question goes here</p>
       <ul id="answers"></ul>
     </main>
+      <!-- COUNTDOWN -->
+      <section class="hero-countdown" id="countdown-screen">
+        <div class="container-wrapper">
+          <img src="../assets/vector/logo.svg" alt="Quiz App Logo" />
+
+          <div class="counter-container">
+            <p class="counter" id="countdown"></p>
+          </div>
+
+          <h3 class="counter-title">GET READY!</h3>
+        </div>
+      </section>
+
+      <!-- FRÅGA + 20 SEK + PROGRESSBAR -->
+      <section class="hero hidden" id="question-screen">
+        <p id="question">Question goes here</p>
+
+        <div class="question-timer-wrapper">
+          <span id="question-timer">20</span>s kvar
+          <div class="progress-wrapper">
+            <div class="progress-bar" id="progress-bar"></div>
+          </div>
+        </div>
+
+        <ul id="answers"></ul>
+      </section>
+
+      <!-- RESULTAT / RÄTT SVAR -->
+      <section class="hero hidden" id="result-screen">
+        <div class="container">
+          <h2 id="result-message">Rätt / Fel / Tiden är slut</h2>
+          <p id="correct-answer-text"></p>
+          <button id="next-question-btn">Nästa fråga</button>
+        </div>
+      </section>
+    </main>
   </body>
 </html>
