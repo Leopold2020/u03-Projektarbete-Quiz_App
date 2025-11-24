@@ -5,6 +5,10 @@ const quizState = {
   score: 0,
   questions: [],
   settings: {},
+  questionTimer: {
+    interval: null,
+    timeout: null,
+  },
 };
 
 // DOM-elements
@@ -92,12 +96,6 @@ async function isValidCategory(category) {
 function isValidDifficulty(difficulty) {
   const validDifficulties = ["", "easy", "medium", "hard"]; // empty is any difficulty
   return validDifficulties.includes(difficulty);
-
-  startCountdown(5, () => {
-  setCountdown(5, () => {
-    showQuestionScreen();
-    startQuestion();
-  });
 }
 
 function startQuestion() {
@@ -150,6 +148,7 @@ function handleAnswerClick(event) {
 
 function handleAnswer(selectedAnswer) {
   // reset timer before doing anything else
+  stopQuestionTimer();
 
   const question = quizState.questions[quizState.currentQuestionIndex];
 
@@ -217,41 +216,27 @@ function shuffle(array) {
 }
 
 function startQuestionTimer() {
-  questionTimeLeft = QUESTION_DURATION;
-  questionTimerElement.textContent = questionTimeLeft;
-
-  timerMeter.value = QUESTION_DURATION;
-
-  if (questionTimerId) {
-    clearInterval(questionTimerId);
-  }
-
-  questionTimerId = setInterval(() => {
-    questionTimeLeft--;
-
-    if (questionTimeLeft < 0) {
-      questionTimeLeft = 0;
-    }
-
-    questionTimerElement.textContent = questionTimeLeft;
-
-    timerMeter.value = questionTimeLeft;
-    const progress = (questionTimeLeft / QUESTION_DURATION) * 100;
-    progressBar.style.width = progress + "%";
-
-    if (questionTimeLeft <= 0) {
-      clearInterval(questionTimerId);
-      questionTimerId = null;
+  const [interval, timeout] = setCountdown(
+    (remaining, duration) => {
+      const timeInSeconds = Math.floor(remaining / 1000);
+      questionTimerElement.textContent = timeInSeconds;
+      timerMeter.max = duration;
+      timerMeter.value = remaining;
+    },
+    () => {
       // handleTimeUp();
-    }
-  }, 1000);
+    },
+    QUESTION_DURATION * 1000,
+    100, // 10 updates per second
+  );
+
+  quizState.questionTimer.interval = interval;
+  quizState.questionTimer.timeout = timeout;
 }
 
 function stopQuestionTimer() {
-  if (questionTimerId) {
-    clearInterval(questionTimerId);
-    questionTimerId = null;
-  }
+  clearInterval(quizState.questionTimer.interval);
+  clearTimeout(quizState.questionTimer.timeout);
 }
 
 // Countdown
@@ -280,20 +265,22 @@ function setCountdown(
   const timerStart = Date.now();
   const timerDone = timerStart + durationMs;
 
-  updateCallback(durationMs, timerDone, timerStart);
+  updateCallback(durationMs, durationMs, timerDone, timerStart);
 
   const interval = setInterval(() => {
     // keep the remaining time positive
     const remaining = Math.max(0, timerDone - Date.now());
-    updateCallback(remaining, timerDone, timerStart);
+    updateCallback(remaining, durationMs, timerDone, timerStart);
   }, intervalMs);
 
-  setTimeout(() => {
+  const timeout = setTimeout(() => {
     clearInterval(interval);
     doneCallback(timerStart);
   }, durationMs);
+
+  return [interval, timeout];
 }
 
-function updateCountdown(remaining, timerDone, timerStart) {
+function updateCountdown(remaining) {
   countdownElement.textContent = Math.floor(remaining / 1000);
 }
