@@ -94,6 +94,14 @@ body {
   }
 }
 
+.floating-ball {
+  position: absolute;
+  background-color: #640278;
+  aspect-ratio: 1;
+  border-radius: var(--border-radius-rounded);
+  z-index: -1;
+}
+
 /* Countdown styles */
 
 .hero-countdown {
@@ -103,7 +111,7 @@ body {
 }
 
 .container-wrapper {
-  display:flex;  
+  display: flex;
   flex-direction: column;
   max-width: 500px;
   width: 100%;
@@ -156,8 +164,6 @@ body {
 .meter::-webkit-meter-even-less-good-value {
   background: red;
 }
-
-
 
 .hidden {
   display: none;

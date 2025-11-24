@@ -37,7 +37,7 @@ async function init() {
 
   quizState.settings = await getQuizSettings();
 
-  quizState.questions = await trivia
+  trivia
     .getQuestions(
       quizState.settings.amountOfQuestions,
       quizState.settings.category,
@@ -216,15 +216,6 @@ function updateQuestionIndexDisplay() {
   // document.getElementById("question-index").textContent =
   //   quizState.currentQuestionIndex + 1;
   console.log("Question Index:", quizState.currentQuestionIndex + 1);
-}
-
-function handleTimeUp() {
-  console.log("Tiden är slut!");
-  // Här kan du t.ex:
-  // - disabla svarsknappar
-  // - visa "Tiden är slut, klicka vidare"
-  // Just nu: gå direkt till nästa fråga:
-  nextQuestion();
 }
 
 // Fisher-Yates shuffle algorithm
