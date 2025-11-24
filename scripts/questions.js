@@ -99,15 +99,19 @@ function isValidDifficulty(difficulty) {
 }
 
 function startQuiz() {
-  // render first question
-  renderCurrentQuestion();
+  // first question
+  startCurrentQuestion();
   // TODO: analytics tracking
   // maybe add a global timer
 }
 
-function renderCurrentQuestion() {
+function startCurrentQuestion() {
   updateQuestionIndexDisplay();
+  renderCurrentQuestion();
+  startQuestionTimer();
+}
 
+function renderCurrentQuestion() {
   const question = quizState.questions[quizState.currentQuestionIndex];
   document.getElementById("question").textContent = question.question;
 
@@ -122,9 +126,6 @@ function renderCurrentQuestion() {
   });
 
   document.getElementById("answers").replaceChildren(fragment);
-
-  // start timer
-  startQuestionTimer();
 }
 
 function createAnswerElement(answer) {
@@ -169,7 +170,7 @@ function nextQuestion() {
   if (quizState.currentQuestionIndex >= quizState.questions.length) {
     showFinalScore();
   } else {
-    renderCurrentQuestion();
+    startCurrentQuestion();
   }
 }
 
