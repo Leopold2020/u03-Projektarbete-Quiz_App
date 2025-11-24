@@ -232,7 +232,7 @@ function startQuestionTimer() {
     if (questionTimeLeft <= 0) {
       clearInterval(questionTimerId);
       questionTimerId = null;
-      handleTimeUp();
+      // handleTimeUp();
     }
   }, 1000);
 }
