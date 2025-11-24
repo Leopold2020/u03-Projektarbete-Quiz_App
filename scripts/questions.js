@@ -101,9 +101,6 @@ function isValidDifficulty(difficulty) {
 function startQuestion() {
   // render next question
   renderCurrentQuestion();
-
-  // start timer
-  startQuestionTimer();
 }
 
 function renderCurrentQuestion() {
@@ -124,6 +121,7 @@ function renderCurrentQuestion() {
 
   document.getElementById("answers").replaceChildren(fragment);
 
+  // start timer
   startQuestionTimer();
 }
 
@@ -216,6 +214,10 @@ function shuffle(array) {
 }
 
 function startQuestionTimer() {
+  // stop previous timer if it exists
+  if (quizState.questionTimer.interval !== null) {
+    stopQuestionTimer();
+  }
   const [interval, timeout] = setCountdown(
     (remaining, duration) => {
       const timeInSeconds = Math.floor(remaining / 1000);
@@ -237,6 +239,8 @@ function startQuestionTimer() {
 function stopQuestionTimer() {
   clearInterval(quizState.questionTimer.interval);
   clearTimeout(quizState.questionTimer.timeout);
+  quizState.questionTimer.interval = null;
+  quizState.questionTimer.timeout = null;
 }
 
 // Countdown
