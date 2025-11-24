@@ -164,10 +164,11 @@ function handleAnswer(selectedAnswer) {
   }
 
   showQuestionFeedback();
+}
 
-  nextQuestion();
-  // allow next question button to be clicked
-  nextQuestionBtn.disabled = false;
+function handleTimerExpired() {
+  showTimerExpiredFeedback();
+  showQuestionFeedback();
 }
 
 function nextQuestion() {
@@ -180,6 +181,12 @@ function nextQuestion() {
 }
 
 function showQuestionFeedback() {
+  // disable answer buttons
+  document.querySelectorAll(".answer").forEach((button) => {
+    button.disabled = true;
+  });
+  // enable next question button
+  nextQuestionBtn.disabled = false;
   // show correct answer
 }
 
@@ -191,6 +198,11 @@ function showCorrectFeedback() {
 function showIncorrectFeedback() {
   //TODO: implement
   console.log("Incorrect!");
+}
+
+function showTimerExpiredFeedback() {
+  //TODO: implement
+  console.log("Time's up!");
 }
 
 function showFinalScore() {
@@ -233,10 +245,8 @@ function startQuestionTimer() {
       timerMeter.max = duration;
       timerMeter.value = remaining;
     },
-    () => {
-      // handleTimeUp();
-    },
-    QUESTION_DURATION * 1000,
+    handleTimerExpired,
+    QUESTION_DURATION * 100,
     100, // 10 updates per second
   );
 
