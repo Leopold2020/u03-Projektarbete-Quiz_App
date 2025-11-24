@@ -1,5 +1,7 @@
 import * as trivia from "./trivia_api.js";
 
+const QUESTION_DURATION = 20 * 1000;
+const QUIZ_COUNTDOWN_DURATION = 5 * 1000;
 const quizState = {
   currentQuestionIndex: 0,
   score: 0,
@@ -51,7 +53,7 @@ async function init() {
           showQuestionScreen();
           startQuiz();
         },
-        0,
+        QUIZ_COUNTDOWN_DURATION,
       );
     })
     .catch((error) => {
@@ -246,7 +248,7 @@ function startQuestionTimer() {
       timerMeter.value = remaining;
     },
     handleTimerExpired,
-    QUESTION_DURATION * 100,
+    QUESTION_DURATION,
     100, // 10 updates per second
   );
 
@@ -259,17 +261,6 @@ function stopQuestionTimer() {
   clearTimeout(quizState.questionTimer.timeout);
   quizState.questionTimer.interval = null;
   quizState.questionTimer.timeout = null;
-}
-
-// Countdown
-
-const QUESTION_DURATION = 20;
-let questionTimeLeft = QUESTION_DURATION;
-let questionTimerId = null;
-
-function showCountdownScreen() {
-  countdownScreen.classList.remove("hidden");
-  questionScreen.classList.add("hidden");
 }
 
 function showQuestionScreen() {
