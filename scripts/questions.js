@@ -49,7 +49,7 @@ async function init() {
         updateCountdown,
         () => {
           showQuestionScreen();
-          startQuestion();
+          startQuiz();
         },
         0,
       );
@@ -98,9 +98,11 @@ function isValidDifficulty(difficulty) {
   return validDifficulties.includes(difficulty);
 }
 
-function startQuestion() {
-  // render next question
+function startQuiz() {
+  // render first question
   renderCurrentQuestion();
+  // TODO: analytics tracking
+  // maybe add a global timer
 }
 
 function renderCurrentQuestion() {
