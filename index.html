@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Meta tags (tillfälligt innehåll)-->
+    <meta property="og:title" content="Team 7 Quizapp">
+    <meta property="og:type" content="Quiz application">
+    <meta property="og:description" content="Fun quiz with three difficulties and lots of categories">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quiz App</title>
@@ -27,6 +31,30 @@
         gtag('js', new Date());
         gtag('config', 'G-7VVP1ZEVXX');
       </script>
+        <!--Structured Data (Tillfälligt innehåll) -->
+    <script type="application/ld+json">
+        {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "@id": "https://team7.com/webapp",
+        "name": "Team 7 QuizApp",
+        "url": "https://Team7.com",
+        "description": "Fun quiz with different categories and difficulties",
+        "genre": "Trivia, General Knowledge",
+        "applicationCategory": "QuizApplication",
+          "keywords": [
+          "quiz",
+          "trivia",
+          "general knowledge",
+          "leaderboard",
+          "difficulty levels",
+          "categories"
+        ],
+        "inLanguage": "en-US",
+        "operatingSystem":
+          "Web"
+        }
+    </script>
     <!-- Script -->
     <script src="scripts/index.js" defer type="module"></script>
   </head>
