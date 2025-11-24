@@ -141,19 +141,19 @@ body {
 }
 
 /* Färgtema */
-meter::-webkit-meter-bar {
+.meter::-webkit-meter-bar {
   background: rgba(255, 255, 255, 0.3);
 }
 
-meter::-webkit-meter-optimum-value {
+.meter::-webkit-meter-optimum-value {
   background: #71a2fd; /* Start */
 }
 
-meter::-webkit-meter-suboptimum-value {
+.meter::-webkit-meter-suboptimum-value {
   background: orange;
 }
 
-meter::-webkit-meter-even-less-good-value {
+.meter::-webkit-meter-even-less-good-value {
   background: red;
 }
 

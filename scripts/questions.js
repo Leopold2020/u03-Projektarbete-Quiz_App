@@ -14,8 +14,10 @@ const resultScreen = document.getElementById("result-screen");
 
 const questionElement = document.getElementById("question");
 //const answersList = document.getElementById("answers");
+
 const questionTimerElement = document.getElementById("question-timer");
-const progressBar = document.getElementById("progress-bar");
+const timerMeter = document.getElementById("timer-meter");
+
 
 const resultMessage = document.getElementById("result-message");
 const correctAnswerText = document.getElementById("correct-answer-text");
@@ -40,8 +42,11 @@ async function init() {
   const answersList = document
     .getElementById("answers")
     .addEventListener("click", handleAnswerClick);
-  startCountdown(5, showQuestionScreen);  
+  
+    startCountdown(5, () => {
+  showQuestionScreen();
   startQuestion();
+});
 }
 
 function startQuestion() {
@@ -70,8 +75,6 @@ function renderCurrentQuestion() {
   });
 
   document.getElementById("answers").replaceChildren(fragment);
-
-      startQuestionTimer(); 
 
 }
 
@@ -146,7 +149,14 @@ function updateQuestionIndexDisplay() {
   console.log("Question Index:", quizState.currentQuestionIndex + 1);
 }
 
-handleTimeUp(); // Vad ska hända när tiden tar slut. 
+function handleTimeUp() {
+  console.log("Tiden är slut!");
+  // Här kan du t.ex:
+  // - disabla svarsknappar
+  // - visa "Tiden är slut, klicka vidare"
+  // Just nu: gå direkt till nästa fråga:
+  nextQuestion();
+}
 
 // Fisher-Yates shuffle algorithm
 function shuffle(array) {
@@ -160,12 +170,11 @@ function shuffle(array) {
 
 
 function startQuestionTimer() {
-  // reset
   questionTimeLeft = QUESTION_DURATION;
   questionTimerElement.textContent = questionTimeLeft;
-  progressBar.style.width = "100%";
 
-  // rensa gammal
+  timerMeter.value = QUESTION_DURATION;
+
   if (questionTimerId) {
     clearInterval(questionTimerId);
   }
@@ -179,16 +188,16 @@ function startQuestionTimer() {
 
     questionTimerElement.textContent = questionTimeLeft;
 
-    const progress = (questionTimeLeft / QUESTION_DURATION) * 100;
-    progressBar.style.width = progress + "%"; 
+    timerMeter.value = questionTimeLeft;
 
     if (questionTimeLeft <= 0) {
       clearInterval(questionTimerId);
       questionTimerId = null;
-      handleTimeUp(); 
+      handleTimeUp();
     }
   }, 1000);
 }
+
 
 function stopQuestionTimer() {
   if (questionTimerId) {
