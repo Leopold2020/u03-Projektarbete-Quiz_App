@@ -106,28 +106,32 @@ body {
     opacity: 0.8;
   }
 
-  #consent-bar button {
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
+#consent-bar button {
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0.8rem 1.2rem;
+  color: white;
+  font-size: 1.3rem;
+
+  &.allow {
+    background: #176419;
+    margin-right: 0.7rem;
+
     &:hover {
-      opacity: 0.7;
+      background-color: #052e16;
     }
   }
 
-  .allow { 
-    background: #176419; 
-    color:white;
+  &.deny {
+    background: #ff0000;
     padding: 0.8rem 1.2rem;
-    margin-right: 0.7rem;
-    font-size: 1.3rem;
+
+    &:hover {
+      background-color: darkred;
+    }
   }
-  .deny {
-    background: #ff0000; 
-    color: white;
-    padding: 0.8rem 1.2rem;
-    font-size: 1.3rem;
-  }
+}
 
 .floating-ball {
   position: absolute;
