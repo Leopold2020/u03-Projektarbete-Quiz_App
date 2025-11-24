@@ -297,6 +297,8 @@ function setCountdown(
 
   const timeout = setTimeout(() => {
     clearInterval(interval);
+    // final update
+    updateCallback(0, durationMs, timerDone, timerStart);
     doneCallback(timerStart);
   }, durationMs);
 
