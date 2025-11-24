@@ -40,7 +40,7 @@ async function init() {
   const answersList = document
     .getElementById("answers")
     .addEventListener("click", handleAnswerClick);
-
+  startCountdown(5, showQuestionScreen);  
   startQuestion();
 }
 
@@ -236,5 +236,5 @@ function startCountdown(seconds, callback) {
 }
 
 
-startCountdown(5, showQuestionScreen);
+
 
