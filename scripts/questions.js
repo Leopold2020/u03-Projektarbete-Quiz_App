@@ -31,6 +31,15 @@ async function init() {
 
   quizState.settings = await getQuizSettings();
 
+  setCountdown(
+    updateCountdown,
+    () => {
+      showQuestionScreen();
+      startQuestion();
+    },
+    5000,
+  );
+
   quizState.questions = await trivia
     .getQuestions(
       quizState.settings.amountOfQuestions,
@@ -85,6 +94,7 @@ function isValidDifficulty(difficulty) {
   return validDifficulties.includes(difficulty);
 
   startCountdown(5, () => {
+  setCountdown(5, () => {
     showQuestionScreen();
     startQuestion();
   });
@@ -260,25 +270,30 @@ function showQuestionScreen() {
   questionScreen.classList.remove("hidden");
 }
 
-function startCountdown(seconds, callback) {
-  let counter = seconds;
+// set a countdown with a interval function and a timeout function
+function setCountdown(
+  updateCallback,
+  doneCallback,
+  durationMs = 1000,
+  intervalMs = 1000,
+) {
+  const timerStart = Date.now();
+  const timerDone = timerStart + durationMs;
 
-  // visa första värdet direkt
-  countdownElement.textContent = counter;
+  updateCallback(durationMs, timerDone, timerStart);
 
   const interval = setInterval(() => {
-    counter--; // minska först
+    // keep the remaining time positive
+    const remaining = Math.max(0, timerDone - Date.now());
+    updateCallback(remaining, timerDone, timerStart);
+  }, intervalMs);
 
-    countdownElement.textContent = counter;
-
-    if (counter <= 0) {
-      clearInterval(interval);
-
-      if (typeof callback === "function") {
-        callback();
-      }
-    }
-  }, 1000);
+  setTimeout(() => {
+    clearInterval(interval);
+    doneCallback(timerStart);
+  }, durationMs);
 }
 
-startCountdown(5, showQuestionScreen);
+function updateCountdown(remaining, timerDone, timerStart) {
+  countdownElement.textContent = Math.floor(remaining / 1000);
+}
