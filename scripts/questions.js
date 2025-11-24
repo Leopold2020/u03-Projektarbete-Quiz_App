@@ -35,15 +35,6 @@ async function init() {
 
   quizState.settings = await getQuizSettings();
 
-  setCountdown(
-    updateCountdown,
-    () => {
-      showQuestionScreen();
-      startQuestion();
-    },
-    5000,
-  );
-
   quizState.questions = await trivia
     .getQuestions(
       quizState.settings.amountOfQuestions,
@@ -52,7 +43,16 @@ async function init() {
       quizState.settings.answerType,
     )
     .then((questions) => {
-      return questions;
+      quizState.questions = questions;
+      // start countdown before first question is shown
+      setCountdown(
+        updateCountdown,
+        () => {
+          showQuestionScreen();
+          startQuestion();
+        },
+        0,
+      );
     })
     .catch((error) => {
       console.error("Error fetching questions:", error);
