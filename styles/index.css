@@ -102,8 +102,7 @@ body {
     position: fixed;
     bottom: 0; left: 0; right: 0;
     padding: 0.8rem;
-    background: #0b0112;
-    opacity: 0.8;
+    background: #3b0764;
   }
 
 #consent-bar button {
