@@ -63,7 +63,9 @@ async function init() {
     .getElementById("answers")
     .addEventListener("click", handleAnswerClick);
 
-  startQuestion();
+  nextQuestionBtn.addEventListener("click", () => {
+    nextQuestion();
+  });
 }
 
 async function getQuizSettings() {
@@ -106,6 +108,7 @@ function startQuiz() {
 }
 
 function startCurrentQuestion() {
+  nextQuestionBtn.disabled = true;
   updateQuestionIndexDisplay();
   renderCurrentQuestion();
   startQuestionTimer();
@@ -163,6 +166,8 @@ function handleAnswer(selectedAnswer) {
   showQuestionFeedback();
 
   nextQuestion();
+  // allow next question button to be clicked
+  nextQuestionBtn.disabled = false;
 }
 
 function nextQuestion() {
