@@ -18,6 +18,21 @@ getCategories()
     document.getElementById("category").appendChild(option);
   });
 
+
+    document.getElementById("allow-cookies").addEventListener("click", () => {
+      gtag('consent', 'update', {
+        'analytics_storage': 'granted'
+      });
+      document.getElementById("consent-bar").style.display = "none";
+    });
+
+    document.getElementById("deny-cookies").addEventListener("click", () => {
+      gtag('consent', 'update', {
+        'analytics_storage': 'denied'
+      });
+      document.getElementById("consent-bar").style.display = "none";
+    });
+
 // add three floating circles at random positions
 for (let i = 0; i < 3; i++) {
   const circle = generateCircle();

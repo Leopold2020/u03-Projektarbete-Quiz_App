@@ -70,6 +70,7 @@ body {
         &:hover {
           background-color: var(--select-hover-color);
         }
+        
       }
 
       button {
@@ -90,6 +91,43 @@ body {
           background-color: var(--button-hover-color);
         }
       }
+    }
+  }
+}
+    
+  #consent-bar{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 0.8rem;
+    background: #3b0764;
+  }
+
+#consent-bar button {
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0.8rem 1.2rem;
+  color: white;
+  font-size: 1.3rem;
+
+  &.allow {
+    background: #176419;
+    margin-right: 0.7rem;
+
+    &:hover {
+      background-color: #052e16;
+    }
+  }
+
+  &.deny {
+    background: #ff0000;
+    padding: 0.8rem 1.2rem;
+
+    &:hover {
+      background-color: darkred;
     }
   }
 }
