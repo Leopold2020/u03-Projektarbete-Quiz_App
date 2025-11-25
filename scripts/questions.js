@@ -1,11 +1,33 @@
 import * as trivia from "./trivia_api.js";
 
+const QUESTION_DURATION = 20 * 1000;
+const QUIZ_COUNTDOWN_DURATION = 5 * 1000;
 const quizState = {
   currentQuestionIndex: 0,
   correctQuestions: [],
   questions: [],
   settings: {},
+  questionTimer: {
+    interval: null,
+    timeout: null,
+  },
 };
+
+// DOM-elements
+const countdownElement = document.getElementById("countdown");
+const countdownScreen = document.getElementById("countdown-screen");
+const questionScreen = document.getElementById("question-screen");
+const resultScreen = document.getElementById("result-screen");
+
+const questionElement = document.getElementById("question");
+//const answersList = document.getElementById("answers");
+
+const questionTimerElement = document.getElementById("question-timer");
+const timerMeter = document.getElementById("timer-meter");
+
+const resultMessage = document.getElementById("result-message");
+const correctAnswerText = document.getElementById("correct-answer-text");
+const nextQuestionBtn = document.getElementById("next-question-btn");
 
 init();
 
@@ -15,7 +37,7 @@ async function init() {
 
   quizState.settings = await getQuizSettings();
 
-  quizState.questions = await trivia
+  trivia
     .getQuestions(
       quizState.settings.amountOfQuestions,
       quizState.settings.category,
@@ -23,7 +45,16 @@ async function init() {
       quizState.settings.answerType,
     )
     .then((questions) => {
-      return questions;
+      quizState.questions = questions;
+      // start countdown before first question is shown
+      setCountdown(
+        updateCountdown,
+        () => {
+          showQuestionScreen();
+          startQuiz();
+        },
+        QUIZ_COUNTDOWN_DURATION,
+      );
     })
     .catch((error) => {
       console.error("Error fetching questions:", error);
@@ -34,7 +65,9 @@ async function init() {
     .getElementById("answers")
     .addEventListener("click", handleAnswerClick);
 
-  startQuestion();
+  nextQuestionBtn.addEventListener("click", () => {
+    nextQuestion();
+  });
 }
 
 async function getQuizSettings() {
@@ -69,16 +102,21 @@ function isValidDifficulty(difficulty) {
   return validDifficulties.includes(difficulty);
 }
 
-function startQuestion() {
-  // render next question
-  renderCurrentQuestion();
+function startQuiz() {
+  // first question
+  startCurrentQuestion();
+  // TODO: analytics tracking
+  // maybe add a global timer
+}
 
-  // start timer
+function startCurrentQuestion() {
+  nextQuestionBtn.disabled = true;
+  updateQuestionIndexDisplay();
+  renderCurrentQuestion();
+  startQuestionTimer();
 }
 
 function renderCurrentQuestion() {
-  updateQuestionIndexDisplay();
-
   const question = quizState.questions[quizState.currentQuestionIndex];
   document.getElementById("question").textContent = question.question;
 
@@ -116,6 +154,7 @@ function handleAnswerClick(event) {
 
 function handleAnswer(selectedAnswer) {
   // reset timer before doing anything else
+  stopQuestionTimer();
 
   const question = quizState.questions[quizState.currentQuestionIndex];
 
@@ -127,8 +166,11 @@ function handleAnswer(selectedAnswer) {
   }
 
   showQuestionFeedback();
+}
 
-  nextQuestion();
+function handleTimerExpired() {
+  showTimerExpiredFeedback();
+  showQuestionFeedback();
 }
 
 function nextQuestion() {
@@ -136,11 +178,17 @@ function nextQuestion() {
   if (quizState.currentQuestionIndex >= quizState.questions.length) {
     showFinalScore();
   } else {
-    renderCurrentQuestion();
+    startCurrentQuestion();
   }
 }
 
 function showQuestionFeedback() {
+  // disable answer buttons
+  document.querySelectorAll(".answer").forEach((button) => {
+    button.disabled = true;
+  });
+  // enable next question button
+  nextQuestionBtn.disabled = false;
   // show correct answer
 }
 
@@ -152,6 +200,11 @@ function showCorrectFeedback() {
 function showIncorrectFeedback() {
   //TODO: implement
   console.log("Incorrect!");
+}
+
+function showTimerExpiredFeedback() {
+  //TODO: implement
+  console.log("Time's up!");
 }
 
 function showFinalScore() {
@@ -185,4 +238,69 @@ function shuffle(array) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
+}
+
+function startQuestionTimer() {
+  // stop previous timer if it exists
+  if (quizState.questionTimer.interval !== null) {
+    stopQuestionTimer();
+  }
+  const [interval, timeout] = setCountdown(
+    (remaining, duration) => {
+      const timeInSeconds = Math.floor(remaining / 1000);
+      questionTimerElement.textContent = timeInSeconds;
+      timerMeter.max = duration;
+      timerMeter.value = remaining;
+    },
+    handleTimerExpired,
+    QUESTION_DURATION,
+    100, // 10 updates per second
+  );
+
+  quizState.questionTimer.interval = interval;
+  quizState.questionTimer.timeout = timeout;
+}
+
+function stopQuestionTimer() {
+  clearInterval(quizState.questionTimer.interval);
+  clearTimeout(quizState.questionTimer.timeout);
+  quizState.questionTimer.interval = null;
+  quizState.questionTimer.timeout = null;
+}
+
+function showQuestionScreen() {
+  countdownScreen.classList.add("hidden");
+  questionScreen.classList.remove("hidden");
+}
+
+// set a countdown with a interval function and a timeout function
+function setCountdown(
+  updateCallback,
+  doneCallback,
+  durationMs = 1000,
+  intervalMs = 1000,
+) {
+  const timerStart = Date.now();
+  const timerDone = timerStart + durationMs;
+
+  updateCallback(durationMs, durationMs, timerDone, timerStart);
+
+  const interval = setInterval(() => {
+    // keep the remaining time positive
+    const remaining = Math.max(0, timerDone - Date.now());
+    updateCallback(remaining, durationMs, timerDone, timerStart);
+  }, intervalMs);
+
+  const timeout = setTimeout(() => {
+    clearInterval(interval);
+    // final update
+    updateCallback(0, durationMs, timerDone, timerStart);
+    doneCallback(timerStart);
+  }, durationMs);
+
+  return [interval, timeout];
+}
+
+function updateCountdown(remaining) {
+  countdownElement.textContent = Math.floor(remaining / 1000);
 }

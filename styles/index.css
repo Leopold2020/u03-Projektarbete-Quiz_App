@@ -101,3 +101,70 @@ body {
   border-radius: var(--border-radius-rounded);
   z-index: -1;
 }
+
+/* Countdown styles */
+
+.hero-countdown {
+  display: grid;
+  place-content: center;
+  min-height: 100vh;
+}
+
+.container-wrapper {
+  display: flex;
+  flex-direction: column;
+  max-width: 500px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.counter {
+  font-size: 13rem;
+  text-align: center;
+  font-weight: bold;
+}
+.counter-title {
+  font-size: 4rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.counter-container {
+  background-color: var(--button-hover-color);
+  border-radius: 150px;
+  border: 7px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 300px;
+  height: 300px;
+}
+
+/* Progress bar styles */
+.meter {
+  width: 100%;
+  height: 20px;
+}
+
+/* Färgtema */
+.meter::-webkit-meter-bar {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.meter::-webkit-meter-optimum-value {
+  background: #71a2fd; /* Start */
+}
+
+.meter::-webkit-meter-suboptimum-value {
+  background: orange;
+}
+
+.meter::-webkit-meter-even-less-good-value {
+  background: red;
+}
+
+.hidden {
+  display: none;
+}
