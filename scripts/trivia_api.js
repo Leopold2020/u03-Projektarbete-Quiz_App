@@ -1,4 +1,4 @@
-function responseNumber(address) {
+function responseNumber(address) { // getting categories should not be used with this function
   try {
     return new Promise(async function(resolve, reject) {
       
@@ -122,7 +122,7 @@ export async function getQuestions(
         '&encode=base64' +
         (token ? '&token=' + token : '')
       );
-      console.log(toSend);
+
       await responseNumber(toSend).then( async questions=>{
         
         if (!questions.response_code === 0) {
