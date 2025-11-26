@@ -1,32 +1,64 @@
-function responseNumber(response) { // Not yet implamanted
-  switch (response.response_code) {
-    case 0: // Success
-      break;
+function responseNumber(address) { // getting categories should not be used with this function
+  try {
+    return new Promise(async function(resolve, reject) {
+      
+      await fetch(address).then(async response => {
+      let convertedResponse = await response.json();
 
-    case 1: // No result
-      console.log("Nothing was found")
-      break;
-    
-    case 2: // Invalid paramater
-      console.log("Invalid paramater")
-      break;
-    
-    case 3: // Token not found
-      console.log("Token not found")
-      break;
+      switch (convertedResponse.response_code) {
+        case 0: // Success
+          resolve(convertedResponse);
+          break
 
-    case 4: // Token empty
-      console.log("Token empty")
-      break;
+        case 1: // No result
+          console.log("Nothing was found");
+          reject;
+          break;
+        
+        case 2: // Invalid paramater
+          console.log("Invalid paramater");
+          reject;
+          break;
+        
+        case 3: // Token not found
+          console.log("Token not found");
+          reject;
+          break;
 
-    case 5: // Rate limit
-      console.log("Rate limit reached")
-      break;
-    
-    default:
-      break;
-  };
+        case 4: // Token empty
+          console.log("Token empty");
+          reject;
+          break;
+
+        case 5: // Rate limit
+          console.log("Rate limit reached");
+          console.log("reattempting request, please wait a couple of seconds")
+
+          setTimeout(async () => {
+            let reattemptResponse = await fetch(address);
+            let reattemptConvertedResponse = await reattemptResponse.json();
+            if (reattemptConvertedResponse.response_code === 0) {
+                console.log("reattempt success");
+                resolve(reattemptConvertedResponse);
+              } else {
+                console.log("something went wrong")
+                reject
+              }
+            }, 6000);
+          break;
+
+        default:
+          console.log("something with the request went wrong");
+          reject;
+          break;
+        };
+      });
+    });
+  } catch (error) {
+      console.log(error)
+    }
 };
+
 
 export async function getToken(existingToken) {
   try {
@@ -66,12 +98,15 @@ export async function getCategories() {
 }
 
 export async function getQuestions(
-  amountOfQuestions,
+  amountOfQuestions = 10,
   category,
   questionsDifficulty,
-  answerType,
-  token
+  answerType = "multiple",
+  token,
 ) {
+  return new Promise(async function(resolve, reject) {
+    
+  
   try {
     if (
       (typeof amountOfQuestions === "number" || "null" || "undefined") &&
@@ -79,21 +114,19 @@ export async function getQuestions(
       (typeof questionsDifficulty === "string" || "null" || "undefined") &&
       (typeof answerType === "string" || "null" || "undefined")
     ) {
-      const questions = await fetch(
-        `https://opentdb.com/api.php?amount=${amountOfQuestions ?? `10`}` +
-        (category ? '&category=' + category : '') +
-        (questionsDifficulty ? '&difficulty=' + questionsDifficulty : '') +
-        (answerType ? '&type=' + answerType : '&type=multiple') +
-        '&encode=base64' +
-        (token ? '&token=' + token : '')
-      );
 
-      if (!questions.ok) {
-        throw new Error("Response did not succeed");
-      } else {
-        const processedQuestions = await questions.json();
+      const settings = new URLSearchParams({
+        amount: amountOfQuestions,
+        category: category ?? '',
+        difficulty: questionsDifficulty ?? '',
+        type: answerType,
+        encode: 'base64',
+        token: token ?? '',
+      });
 
-        let decodedQuestions = processedQuestions.results.map((object) => {
+      await responseNumber(`https://opentdb.com/api.php?${settings.toString()}`).then( async questions=>{
+
+        let decodedQuestions = questions.results.map((object) => {
           return {
             type: atob(object.type),
             difficulty: atob(object.difficulty),
@@ -103,16 +136,19 @@ export async function getQuestions(
             incorrect_answers: object.incorrect_answers.map(atob)
           }
         })
+          
+          resolve(decodedQuestions);
+        })
 
-        return decodedQuestions;
-      }
-    } else {
-      throw new Error("Wrong type sent");
-    }
+      } else {
+        throw new Error("Wrong type sent");
+      };
+    
   } catch (error) {
     console.log(error);
-  }
-}
+  };
+  })
+};
 
 // Example for calling functions
 
