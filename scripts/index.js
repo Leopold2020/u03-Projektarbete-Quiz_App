@@ -57,3 +57,18 @@ function generateCircle() {
 function getRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+// Track "Start" click on index page
+const startForm = document.querySelector('form[action="pages/questions.html"]');
+
+if (startForm) {
+  startForm.addEventListener("submit", () => {
+    console.log(">>> GA EVENT: quiz_started from index");
+
+    gtag("event", "quiz_started", {
+      event_category: "quiz",
+      event_label: "start_button_index",
+      value: 1,
+    });
+  });
+}

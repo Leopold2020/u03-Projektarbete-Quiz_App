@@ -103,12 +103,13 @@ function isValidDifficulty(difficulty) {
 function startQuiz() {
   // first question
   startCurrentQuestion();
-  
-   gtag('event', 'quiz_started', {
+
+   /* gtag('event', 'quiz_started', {
     event_category: 'quiz',
     event_label: 'start_button',
     value: 1,
-   });
+    
+   }); */
 
   // maybe add a global timer
 }
@@ -312,7 +313,6 @@ function showQuestionScreen() {
   questionScreen.classList.remove("hidden");
 }
 
-// set a countdown with a interval function and a timeout function
 function setCountdown(
   updateCallback,
   doneCallback,
@@ -325,14 +325,12 @@ function setCountdown(
   updateCallback(durationMs, durationMs, timerDone, timerStart);
 
   const interval = setInterval(() => {
-    // keep the remaining time positive
     const remaining = Math.max(0, timerDone - Date.now());
     updateCallback(remaining, durationMs, timerDone, timerStart);
   }, intervalMs);
 
   const timeout = setTimeout(() => {
     clearInterval(interval);
-    // final update
     updateCallback(0, durationMs, timerDone, timerStart);
     doneCallback(timerStart);
   }, durationMs);
