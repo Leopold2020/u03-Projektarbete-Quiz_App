@@ -339,11 +339,33 @@ body {
 
 .results-screen {
   display: grid;
-  place-content: center;
+  place-items: center;
   min-height: 100vh;
   padding: 1.5rem;
 
   &.hidden {
     display: none;
+  }
+
+  .leaderboard {
+    display: grid;
+    place-items: center;
+    max-width: 600px;
+    width: 100%;
+    list-style-type: none;
+    gap: 1rem;
+
+    li {
+      min-width: 600px;
+      padding: 0.8rem 1.2rem;
+      border-radius: var(--border-radius-rounded);
+      border: 2px solid var(--button-border-color);
+      background-color: var(--select-color);
+      color: #000;
+      font-size: 1rem;
+      font-family: inherit;
+      font-weight: 500;
+      box-shadow: var(--box-shadow);
+    }
   }
 }
