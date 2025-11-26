@@ -1,11 +1,33 @@
 import * as trivia from "./trivia_api.js";
 
+const QUESTION_DURATION = 20 * 1000;
+const QUIZ_COUNTDOWN_DURATION = 5 * 1000;
 const quizState = {
   currentQuestionIndex: 0,
-  score: 0,
+  correctQuestions: [],
   questions: [],
   settings: {},
+  questionTimer: {
+    interval: null,
+    timeout: null,
+  },
 };
+
+// DOM-elements
+const countdownElement = document.getElementById("countdown");
+const countdownScreen = document.getElementById("countdown-screen");
+const questionScreen = document.getElementById("question-screen");
+const resultScreen = document.getElementById("result-screen");
+
+const questionElement = document.getElementById("question");
+//const answersList = document.getElementById("answers");
+
+const questionTimerElement = document.getElementById("question-timer");
+const timerMeter = document.getElementById("timer-meter");
+
+const resultMessage = document.getElementById("result-message");
+const correctAnswerText = document.getElementById("correct-answer-text");
+const nextQuestionBtn = document.getElementById("next-question-btn");
 
 init();
 
@@ -15,7 +37,7 @@ async function init() {
 
   quizState.settings = await getQuizSettings();
 
-  quizState.questions = await trivia
+  trivia
     .getQuestions(
       quizState.settings.amountOfQuestions,
       quizState.settings.category,
@@ -23,7 +45,16 @@ async function init() {
       quizState.settings.answerType,
     )
     .then((questions) => {
-      return questions;
+      quizState.questions = questions;
+      // start countdown before first question is shown
+      setCountdown(
+        updateCountdown,
+        () => {
+          showQuestionScreen();
+          startQuiz();
+        },
+        QUIZ_COUNTDOWN_DURATION,
+      );
     })
     .catch((error) => {
       console.error("Error fetching questions:", error);
@@ -34,7 +65,7 @@ async function init() {
     .getElementById("answers")
     .addEventListener("click", handleAnswerClick);
 
-  startQuestion();
+  nextQuestionBtn.addEventListener("click", nextQuestion);
 }
 
 async function getQuizSettings() {
@@ -69,16 +100,33 @@ function isValidDifficulty(difficulty) {
   return validDifficulties.includes(difficulty);
 }
 
-function startQuestion() {
-  // render next question
-  renderCurrentQuestion();
+function startQuiz() {
+  // first question
+  startCurrentQuestion();
+  
+   gtag('event', 'quiz_started', {
+    event_category: 'quiz',
+    event_label: 'start_button',
+    value: 1,
+   });
 
-  // start timer
+  // maybe add a global timer
+}
+
+function startCurrentQuestion() {
+  nextQuestionBtn.disabled = true;
+
+  if (quizState.currentQuestionIndex >= quizState.questions.length - 1) {
+    nextQuestionBtn.textContent = "Finish Quiz";
+    nextQuestionBtn.removeEventListener("click", nextQuestion);
+    nextQuestionBtn.addEventListener("click", showFinalScore);
+  }
+  updateQuestionIndexDisplay();
+  renderCurrentQuestion();
+  startQuestionTimer();
 }
 
 function renderCurrentQuestion() {
-  updateQuestionIndexDisplay();
-
   const question = quizState.questions[quizState.currentQuestionIndex];
   document.getElementById("question").textContent = question.question;
 
@@ -115,48 +163,106 @@ function handleAnswerClick(event) {
 }
 
 function handleAnswer(selectedAnswer) {
-  // reset timer before doing anything else
+  stopQuestionTimer();
 
   const question = quizState.questions[quizState.currentQuestionIndex];
 
   if (selectedAnswer.dataset.answer === question.correct_answer) {
-    quizState.score++;
-    showCorrectFeedback();
+    quizState.correctQuestions.push(question);
+    showCorrectFeedback(selectedAnswer);
   } else {
-    showIncorrectFeedback();
+    showIncorrectFeedback(selectedAnswer, question);
   }
 
   showQuestionFeedback();
+}
 
-  nextQuestion();
+function handleTimerExpired() {
+  showTimerExpiredFeedback();
+  showQuestionFeedback();
 }
 
 function nextQuestion() {
   quizState.currentQuestionIndex++;
-  if (quizState.currentQuestionIndex >= quizState.questions.length) {
-    showFinalScore();
-  } else {
-    renderCurrentQuestion();
-  }
+  startCurrentQuestion();
 }
 
 function showQuestionFeedback() {
+  // disable answer buttons
+  document.querySelectorAll(".answer").forEach((button) => {
+    button.disabled = true;
+  });
+  // enable next question button
+  nextQuestionBtn.disabled = false;
   // show correct answer
 }
 
-function showCorrectFeedback() {
-  //TODO: implement
-  console.log("Correct!");
+function showCorrectFeedback(selectedAnswer) {
+  // Markera valt svar som rätt
+  selectedAnswer.classList.add("answer-correct");
 }
 
-function showIncorrectFeedback() {
+function showIncorrectFeedback(selectedAnswer, question) {
+  // Markera valt svar som fel
+  selectedAnswer.classList.add("answer-incorrect");
+
+  // Markera också vilket svar som var rätt
+  const correctButton = document.querySelector(
+    `.answer[data-answer="${CSS.escape(question.correct_answer)}"]`,
+  );
+
+  if (correctButton) {
+    correctButton.classList.add("answer-correct");
+  }
+}
+
+function showTimerExpiredFeedback() {
   //TODO: implement
-  console.log("Incorrect!");
+  console.log("Time's up!");
 }
 
 function showFinalScore() {
   //TODO: implement
-  console.log("Final Score:", quizState.score);
+  const resultScreen = document.querySelector(".results-screen");
+
+  // show result screen
+  questionScreen.classList.add("hidden");
+  resultScreen.classList.remove("hidden");
+
+  const leaderboard = resultScreen.querySelector(".leaderboard");
+
+  saveResults();
+  const quizResults = JSON.parse(localStorage.getItem("quizResults")) || [];
+  quizResults
+    .map((result) => ({
+      ...result,
+      score: calculateFinalScore(result.correct),
+    }))
+    .sort((a, b) => b.score - a.score)
+    .forEach((result) => {
+      const li = document.createElement("li");
+      li.textContent = result.score;
+      leaderboard.appendChild(li);
+    });
+}
+
+function saveResults() {
+  const quizResults = JSON.parse(localStorage.getItem("quizResults")) || [];
+  const result = { correct: quizState.correctQuestions, time: Date.now() };
+  localStorage.setItem("quizResults", JSON.stringify([...quizResults, result]));
+}
+
+function calculateFinalScore(correctQuestions) {
+  const difficultyPoints = {
+    easy: 1,
+    medium: 2,
+    hard: 3,
+  };
+
+  return correctQuestions.reduce(
+    (acc, question) => acc + difficultyPoints[question.difficulty] ?? 1,
+    0,
+  );
 }
 
 function updateQuestionIndexDisplay() {
@@ -171,4 +277,69 @@ function shuffle(array) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
+}
+
+function startQuestionTimer() {
+  // stop previous timer if it exists
+  if (quizState.questionTimer.interval !== null) {
+    stopQuestionTimer();
+  }
+  const [interval, timeout] = setCountdown(
+    (remaining, duration) => {
+      const timeInSeconds = Math.floor(remaining / 1000);
+      questionTimerElement.textContent = timeInSeconds;
+      timerMeter.max = duration;
+      timerMeter.value = remaining;
+    },
+    handleTimerExpired,
+    QUESTION_DURATION,
+    100, // 10 updates per second
+  );
+
+  quizState.questionTimer.interval = interval;
+  quizState.questionTimer.timeout = timeout;
+}
+
+function stopQuestionTimer() {
+  clearInterval(quizState.questionTimer.interval);
+  clearTimeout(quizState.questionTimer.timeout);
+  quizState.questionTimer.interval = null;
+  quizState.questionTimer.timeout = null;
+}
+
+function showQuestionScreen() {
+  countdownScreen.classList.add("hidden");
+  questionScreen.classList.remove("hidden");
+}
+
+// set a countdown with a interval function and a timeout function
+function setCountdown(
+  updateCallback,
+  doneCallback,
+  durationMs = 1000,
+  intervalMs = 1000,
+) {
+  const timerStart = Date.now();
+  const timerDone = timerStart + durationMs;
+
+  updateCallback(durationMs, durationMs, timerDone, timerStart);
+
+  const interval = setInterval(() => {
+    // keep the remaining time positive
+    const remaining = Math.max(0, timerDone - Date.now());
+    updateCallback(remaining, durationMs, timerDone, timerStart);
+  }, intervalMs);
+
+  const timeout = setTimeout(() => {
+    clearInterval(interval);
+    // final update
+    updateCallback(0, durationMs, timerDone, timerStart);
+    doneCallback(timerStart);
+  }, durationMs);
+
+  return [interval, timeout];
+}
+
+function updateCountdown(remaining) {
+  countdownElement.textContent = Math.floor(remaining / 1000);
 }

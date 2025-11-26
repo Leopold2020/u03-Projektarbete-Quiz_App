@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <meta property="og:title" content="Quiz App Team 7">
+    <meta property="og:type" content="website">
+    <meta property="og:description" content="Fun quiz with different difficulties and categories">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quiz App</title>
@@ -13,7 +16,43 @@
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
       rel="stylesheet"
-    />
+    /> 
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        gtag('consent', 'default', {
+          'analytics_storage': 'denied'
+        });
+      </script>
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-7VVP1ZEVXX"></script>
+      <script>
+        gtag('js', new Date());
+        gtag('config', 'G-7VVP1ZEVXX');
+      </script>
+      <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "@id": "https://u03-quiz-team-7.netlify.app/",
+          "name": "Team 7 QuizApp",
+          "url": "https://u03-quiz-team-7.netlify.app/",
+          "description": "Fun quiz with different categories and difficulties",
+          "genre": "Trivia, General Knowledge",
+          "applicationCategory": "QuizApplication",
+            "keywords": [
+            "quiz",
+            "trivia",
+            "general knowledge",
+            "leaderboard",
+            "difficulty levels",
+            "categories"
+          ],
+          "inLanguage": "en-US",
+          "operatingSystem":
+            "Web"
+        }
+    </script>
     <!-- Script -->
     <script src="scripts/index.js" defer type="module"></script>
   </head>
@@ -35,10 +74,17 @@
               <option value="medium">Medium</option>
               <option value="hard">Hard</option>
             </select>
-            <button>Start</button>
+            <button>Start</button> 
           </form>
         </div>
       </section>
     </main>
+      <div id="consent-bar">
+        <p>We use cookies to analyze this page. Do you accept?</p>
+      <div>
+        <button class="allow" id="allow-cookies">Yes</button>
+        <button class="deny" id="deny-cookies">No</button>
+      </div>
+    </div>
   </body>
 </html>
