@@ -229,22 +229,37 @@ function showFinalScore() {
   questionScreen.classList.add("hidden");
   resultScreen.classList.remove("hidden");
 
-  const finalScore = calculateFinalScore();
   const leaderboard = resultScreen.querySelector(".leaderboard");
 
-  leaderboard.textContent = `Your final score is ${finalScore}`;
-
-  console.log("Final Score:", finalScore);
+  saveResults();
+  const quizResults = JSON.parse(localStorage.getItem("quizResults")) || [];
+  quizResults
+    .map((result) => ({
+      ...result,
+      score: calculateFinalScore(result.correct),
+    }))
+    .sort((a, b) => b.score - a.score)
+    .forEach((result) => {
+      const li = document.createElement("li");
+      li.textContent = result.score;
+      leaderboard.appendChild(li);
+    });
 }
 
-function calculateFinalScore() {
+function saveResults() {
+  const quizResults = JSON.parse(localStorage.getItem("quizResults")) || [];
+  const result = { correct: quizState.correctQuestions, time: Date.now() };
+  localStorage.setItem("quizResults", JSON.stringify([...quizResults, result]));
+}
+
+function calculateFinalScore(correctQuestions) {
   const difficultyPoints = {
     easy: 1,
     medium: 2,
     hard: 3,
   };
 
-  return quizState.correctQuestions.reduce(
+  return correctQuestions.reduce(
     (acc, question) => acc + difficultyPoints[question.difficulty] ?? 1,
     0,
   );
