@@ -180,6 +180,11 @@ body {
   height: 300px;
 }
 
+.seconds {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
 /* Progress bar styles */
 .meter {
   width: 100%;
