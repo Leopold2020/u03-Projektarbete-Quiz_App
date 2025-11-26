@@ -98,11 +98,11 @@ export async function getCategories() {
 }
 
 export async function getQuestions(
-  amountOfQuestions,
+  amountOfQuestions = 10,
   category,
   questionsDifficulty,
-  answerType,
-  token
+  answerType = "multiple",
+  token,
 ) {
   return new Promise(async function(resolve, reject) {
     
@@ -114,34 +114,30 @@ export async function getQuestions(
       (typeof questionsDifficulty === "string" || "null" || "undefined") &&
       (typeof answerType === "string" || "null" || "undefined")
     ) {
-      const toSend = (
-        `https://opentdb.com/api.php?amount=${amountOfQuestions ?? `10`}` +
-        (category ? '&category=' + category : '') +
-        (questionsDifficulty ? '&difficulty=' + questionsDifficulty : '') +
-        (answerType ? '&type=' + answerType : '&type=multiple') +
-        '&encode=base64' +
-        (token ? '&token=' + token : '')
-      );
 
-      await responseNumber(toSend).then( async questions=>{
-        
-        if (!questions.response_code === 0) {
-          throw new Error("Response did not succeed");
-        } else {
-          
-          let decodedQuestions = questions.results.map((object) => {
-            return {
-              type: atob(object.type),
-              difficulty: atob(object.difficulty),
-              category: atob(object.category),
-              question: atob(object.question),
-              correct_answer: atob(object.correct_answer),
-              incorrect_answers: object.incorrect_answers.map(atob)
-            }
-          })
+      const settings = new URLSearchParams({
+        amount: amountOfQuestions,
+        category: category ?? '',
+        difficulty: questionsDifficulty ?? '',
+        type: answerType,
+        encode: 'base64',
+        token: token ?? '',
+      });
+
+      await responseNumber(`https://opentdb.com/api.php?${settings.toString()}`).then( async questions=>{
+
+        let decodedQuestions = questions.results.map((object) => {
+          return {
+            type: atob(object.type),
+            difficulty: atob(object.difficulty),
+            category: atob(object.category),
+            question: atob(object.question),
+            correct_answer: atob(object.correct_answer),
+            incorrect_answers: object.incorrect_answers.map(atob)
+          }
+        })
           
           resolve(decodedQuestions);
-        }
         })
 
       } else {
