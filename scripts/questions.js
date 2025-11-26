@@ -42,7 +42,7 @@ async function init() {
       quizState.settings.amountOfQuestions,
       quizState.settings.category,
       quizState.settings.questionDifficulty,
-      quizState.settings.answerType,
+      quizState.settings.answerType
     )
     .then((questions) => {
       quizState.questions = questions;
@@ -53,7 +53,7 @@ async function init() {
           showQuestionScreen();
           startQuiz();
         },
-        QUIZ_COUNTDOWN_DURATION,
+        QUIZ_COUNTDOWN_DURATION
       );
     })
     .catch((error) => {
@@ -202,7 +202,7 @@ function showIncorrectFeedback(selectedAnswer, question) {
 
   // Markera också vilket svar som var rätt
   const correctButton = document.querySelector(
-    `.answer[data-answer="${CSS.escape(question.correct_answer)}"]`,
+    `.answer[data-answer="${CSS.escape(question.correct_answer)}"]`
   );
 
   if (correctButton) {
@@ -230,7 +230,7 @@ function calculateFinalScore() {
 
   return quizState.correctQuestions.reduce(
     (acc, question) => acc + difficultyPoints[question.difficulty] ?? 1,
-    0,
+    0
   );
 }
 
@@ -262,7 +262,7 @@ function startQuestionTimer() {
     },
     handleTimerExpired,
     QUESTION_DURATION,
-    100, // 10 updates per second
+    100 // 10 updates per second
   );
 
   quizState.questionTimer.interval = interval;
@@ -286,7 +286,7 @@ function setCountdown(
   updateCallback,
   doneCallback,
   durationMs = 1000,
-  intervalMs = 1000,
+  intervalMs = 1000
 ) {
   const timerStart = Date.now();
   const timerDone = timerStart + durationMs;
@@ -312,5 +312,3 @@ function setCountdown(
 function updateCountdown(remaining) {
   countdownElement.textContent = Math.floor(remaining / 1000);
 }
-
-
