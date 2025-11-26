@@ -37,13 +37,8 @@ async function init() {
 
   quizState.settings = await getQuizSettings();
 
-  trivia
-    .getQuestions(
-      quizState.settings.amountOfQuestions,
-      quizState.settings.category,
-      quizState.settings.questionDifficulty,
-      quizState.settings.answerType,
-    )
+  await trivia
+    .getQuestions(quizState.settings)
     .then((questions) => {
       quizState.questions = questions;
       // start countdown before first question is shown
@@ -84,7 +79,7 @@ async function getQuizSettings() {
   return {
     amountOfQuestions: 10,
     category: category,
-    questionDifficulty: difficulty,
+    questionsDifficulty: difficulty,
     answerType: "multiple",
   };
 }

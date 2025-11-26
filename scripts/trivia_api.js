@@ -65,13 +65,13 @@ export async function getCategories() {
   }
 }
 
-export async function getQuestions(
-  amountOfQuestions,
+export async function getQuestions({
+  amountOfQuestions = 10,
   category,
   questionsDifficulty,
-  answerType,
-  token
-) {
+  answerType = "multiple",
+  token,
+}) {
   try {
     if (
       (typeof amountOfQuestions === "number" || "null" || "undefined") &&
@@ -79,14 +79,16 @@ export async function getQuestions(
       (typeof questionsDifficulty === "string" || "null" || "undefined") &&
       (typeof answerType === "string" || "null" || "undefined")
     ) {
-      const questions = await fetch(
-        `https://opentdb.com/api.php?amount=${amountOfQuestions ?? `10`}` +
-        (category ? '&category=' + category : '') +
-        (questionsDifficulty ? '&difficulty=' + questionsDifficulty : '') +
-        (answerType ? '&type=' + answerType : '&type=multiple') +
-        '&encode=base64' +
-        (token ? '&token=' + token : '')
-      );
+      
+      const settings = new URLSearchParams({
+        amount: amountOfQuestions,
+        category: category ?? '',
+        difficulty: questionsDifficulty ?? '',
+        type: answerType,
+        encode: 'base64',
+        token: token ?? '',
+      });
+      const questions = await fetch(`https://opentdb.com/api.php?${settings.toString()}`);
 
       if (!questions.ok) {
         throw new Error("Response did not succeed");
