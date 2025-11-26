@@ -65,9 +65,7 @@ async function init() {
     .getElementById("answers")
     .addEventListener("click", handleAnswerClick);
 
-  nextQuestionBtn.addEventListener("click", () => {
-    nextQuestion();
-  });
+  nextQuestionBtn.addEventListener("click", nextQuestion);
 }
 
 async function getQuizSettings() {
@@ -120,6 +118,7 @@ function startCurrentQuestion() {
 
   if (quizState.currentQuestionIndex >= quizState.questions.length - 1) {
     nextQuestionBtn.textContent = "Finish Quiz";
+    nextQuestionBtn.removeEventListener("click", nextQuestion);
     nextQuestionBtn.addEventListener("click", showFinalScore);
   }
   updateQuestionIndexDisplay();
@@ -185,11 +184,7 @@ function handleTimerExpired() {
 
 function nextQuestion() {
   quizState.currentQuestionIndex++;
-  if (quizState.currentQuestionIndex >= quizState.questions.length) {
-    showFinalScore();
-  } else {
-    startCurrentQuestion();
-  }
+  startCurrentQuestion();
 }
 
 function showQuestionFeedback() {
