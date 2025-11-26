@@ -42,7 +42,7 @@ async function init() {
       quizState.settings.amountOfQuestions,
       quizState.settings.category,
       quizState.settings.questionDifficulty,
-      quizState.settings.answerType,
+      quizState.settings.answerType
     )
     .then((questions) => {
       quizState.questions = questions;
@@ -53,7 +53,7 @@ async function init() {
           showQuestionScreen();
           startQuiz();
         },
-        QUIZ_COUNTDOWN_DURATION,
+        QUIZ_COUNTDOWN_DURATION
       );
     })
     .catch((error) => {
@@ -105,7 +105,13 @@ function isValidDifficulty(difficulty) {
 function startQuiz() {
   // first question
   startCurrentQuestion();
-  // TODO: analytics tracking
+  
+   gtag('event', 'quiz_started', {
+    event_category: 'quiz',
+    event_label: 'start_button',
+    value: 1,
+   });
+
   // maybe add a global timer
 }
 
@@ -153,16 +159,15 @@ function handleAnswerClick(event) {
 }
 
 function handleAnswer(selectedAnswer) {
-  // reset timer before doing anything else
   stopQuestionTimer();
 
   const question = quizState.questions[quizState.currentQuestionIndex];
 
   if (selectedAnswer.dataset.answer === question.correct_answer) {
     quizState.correctQuestions.push(question);
-    showCorrectFeedback();
+    showCorrectFeedback(selectedAnswer);
   } else {
-    showIncorrectFeedback();
+    showIncorrectFeedback(selectedAnswer, question);
   }
 
   showQuestionFeedback();
@@ -192,14 +197,23 @@ function showQuestionFeedback() {
   // show correct answer
 }
 
-function showCorrectFeedback() {
-  //TODO: implement
-  console.log("Correct!");
+function showCorrectFeedback(selectedAnswer) {
+  // Markera valt svar som rätt
+  selectedAnswer.classList.add("answer-correct");
 }
 
-function showIncorrectFeedback() {
-  //TODO: implement
-  console.log("Incorrect!");
+function showIncorrectFeedback(selectedAnswer, question) {
+  // Markera valt svar som fel
+  selectedAnswer.classList.add("answer-incorrect");
+
+  // Markera också vilket svar som var rätt
+  const correctButton = document.querySelector(
+    `.answer[data-answer="${CSS.escape(question.correct_answer)}"]`
+  );
+
+  if (correctButton) {
+    correctButton.classList.add("answer-correct");
+  }
 }
 
 function showTimerExpiredFeedback() {
@@ -222,7 +236,7 @@ function calculateFinalScore() {
 
   return quizState.correctQuestions.reduce(
     (acc, question) => acc + difficultyPoints[question.difficulty] ?? 1,
-    0,
+    0
   );
 }
 
@@ -254,7 +268,7 @@ function startQuestionTimer() {
     },
     handleTimerExpired,
     QUESTION_DURATION,
-    100, // 10 updates per second
+    100 // 10 updates per second
   );
 
   quizState.questionTimer.interval = interval;
@@ -278,7 +292,7 @@ function setCountdown(
   updateCallback,
   doneCallback,
   durationMs = 1000,
-  intervalMs = 1000,
+  intervalMs = 1000
 ) {
   const timerStart = Date.now();
   const timerDone = timerStart + durationMs;

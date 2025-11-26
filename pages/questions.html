@@ -27,7 +27,8 @@
       <section class="hero hidden" id="question-screen">
         <p id="question">Question goes here</p>
 
-        <p>Time left: <span id="question-timer">20</span>s</p>
+        <ul id="answers"></ul>
+        
         <meter
           class="meter"
           id="timer-meter"
@@ -35,8 +36,7 @@
           max="20"
           value="20"
         ></meter>
-
-        <ul id="answers"></ul>
+        <p class="seconds">Time left: <span id="question-timer">20</span>s</p>
         <button id="next-question-btn" disabled>Next Question</button>
       </section>
     </main>
