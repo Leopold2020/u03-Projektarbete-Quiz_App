@@ -14,7 +14,8 @@
 
   --font-poppins: "Poppins", system-ui, sans-serif;
 
-  --box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 * {
@@ -274,7 +275,9 @@ body {
   text-align: left;
   cursor: pointer;
   box-shadow: var(--box-shadow);
-  transition: background-color 0.15s ease, transform 0.1s ease,
+  transition:
+    background-color 0.15s ease,
+    transform 0.1s ease,
     box-shadow 0.1s ease;
 }
 
@@ -306,7 +309,9 @@ body {
   text-transform: uppercase;
   box-shadow: var(--box-shadow);
   cursor: pointer;
-  transition: background-color 0.15s ease, transform 0.1s ease;
+  transition:
+    background-color 0.15s ease,
+    transform 0.1s ease;
 }
 
 #next-question-btn:hover:not(:disabled) {
