@@ -146,6 +146,10 @@ body {
   display: grid;
   place-content: center;
   min-height: 100vh;
+
+  &.hidden {
+    display: none;
+  }
 }
 
 .container-wrapper {
@@ -209,10 +213,6 @@ body {
   background: red;
 }
 
-.hidden {
-  display: none;
-}
-
 /* Frågorna */
 
 #question-screen {
@@ -220,6 +220,10 @@ body {
   place-content: center;
   min-height: 100vh;
   padding: 1.5rem;
+
+  &.hidden {
+    display: none;
+  }
 }
 
 #question-screen > * {
@@ -326,4 +330,15 @@ body {
   background-color: #dc2626;
   border-color: #7f1d1d;
   color: #f5f5f5;
+}
+
+.results-screen {
+  display: grid;
+  place-content: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+
+  &.hidden {
+    display: none;
+  }
 }

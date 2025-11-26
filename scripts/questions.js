@@ -223,7 +223,17 @@ function showTimerExpiredFeedback() {
 
 function showFinalScore() {
   //TODO: implement
+  const resultScreen = document.querySelector(".results-screen");
+
+  // show result screen
+  questionScreen.classList.add("hidden");
+  resultScreen.classList.remove("hidden");
+
   const finalScore = calculateFinalScore();
+  const leaderboard = resultScreen.querySelector(".leaderboard");
+
+  leaderboard.textContent = `Your final score is ${finalScore}`;
+
   console.log("Final Score:", finalScore);
 }
 
