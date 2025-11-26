@@ -117,6 +117,11 @@ function startQuiz() {
 
 function startCurrentQuestion() {
   nextQuestionBtn.disabled = true;
+
+  if (quizState.currentQuestionIndex >= quizState.questions.length - 1) {
+    nextQuestionBtn.textContent = "Finish Quiz";
+    nextQuestionBtn.addEventListener("click", showFinalScore);
+  }
   updateQuestionIndexDisplay();
   renderCurrentQuestion();
   startQuestionTimer();
