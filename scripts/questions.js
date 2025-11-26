@@ -105,7 +105,13 @@ function isValidDifficulty(difficulty) {
 function startQuiz() {
   // first question
   startCurrentQuestion();
-  // TODO: analytics tracking
+  
+   gtag('event', 'quiz_started', {
+    event_category: 'quiz',
+    event_label: 'start_button',
+    value: 1,
+   });
+
   // maybe add a global timer
 }
 
