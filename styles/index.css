@@ -253,6 +253,7 @@ body {
 /* Svarsknapparna */
 .answer {
   width: 100%;
+  min-width: 600px;
   padding: 0.8rem 1.2rem;
   border-radius: var(--border-radius-rounded);
   border: 2px solid var(--button-border-color);
