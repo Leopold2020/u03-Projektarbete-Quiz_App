@@ -42,7 +42,7 @@ async function init() {
       quizState.settings.amountOfQuestions,
       quizState.settings.category,
       quizState.settings.questionDifficulty,
-      quizState.settings.answerType
+      quizState.settings.answerType,
     )
     .then((questions) => {
       quizState.questions = questions;
@@ -53,7 +53,7 @@ async function init() {
           showQuestionScreen();
           startQuiz();
         },
-        QUIZ_COUNTDOWN_DURATION
+        QUIZ_COUNTDOWN_DURATION,
       );
     })
     .catch((error) => {
@@ -65,9 +65,7 @@ async function init() {
     .getElementById("answers")
     .addEventListener("click", handleAnswerClick);
 
-  nextQuestionBtn.addEventListener("click", () => {
-    nextQuestion();
-  });
+  nextQuestionBtn.addEventListener("click", nextQuestion);
 }
 
 async function getQuizSettings() {
@@ -117,6 +115,12 @@ function startQuiz() {
 
 function startCurrentQuestion() {
   nextQuestionBtn.disabled = true;
+
+  if (quizState.currentQuestionIndex >= quizState.questions.length - 1) {
+    nextQuestionBtn.textContent = "Finish Quiz";
+    nextQuestionBtn.removeEventListener("click", nextQuestion);
+    nextQuestionBtn.addEventListener("click", showFinalScore);
+  }
   updateQuestionIndexDisplay();
   renderCurrentQuestion();
   startQuestionTimer();
@@ -180,11 +184,7 @@ function handleTimerExpired() {
 
 function nextQuestion() {
   quizState.currentQuestionIndex++;
-  if (quizState.currentQuestionIndex >= quizState.questions.length) {
-    showFinalScore();
-  } else {
-    startCurrentQuestion();
-  }
+  startCurrentQuestion();
 }
 
 function showQuestionFeedback() {
@@ -208,7 +208,7 @@ function showIncorrectFeedback(selectedAnswer, question) {
 
   // Markera också vilket svar som var rätt
   const correctButton = document.querySelector(
-    `.answer[data-answer="${CSS.escape(question.correct_answer)}"]`
+    `.answer[data-answer="${CSS.escape(question.correct_answer)}"]`,
   );
 
   if (correctButton) {
@@ -223,20 +223,45 @@ function showTimerExpiredFeedback() {
 
 function showFinalScore() {
   //TODO: implement
-  const finalScore = calculateFinalScore();
-  console.log("Final Score:", finalScore);
+  const resultScreen = document.querySelector(".results-screen");
+
+  // show result screen
+  questionScreen.classList.add("hidden");
+  resultScreen.classList.remove("hidden");
+
+  const leaderboard = resultScreen.querySelector(".leaderboard");
+
+  saveResults();
+  const quizResults = JSON.parse(localStorage.getItem("quizResults")) || [];
+  quizResults
+    .map((result) => ({
+      ...result,
+      score: calculateFinalScore(result.correct),
+    }))
+    .sort((a, b) => b.score - a.score)
+    .forEach((result) => {
+      const li = document.createElement("li");
+      li.textContent = result.score;
+      leaderboard.appendChild(li);
+    });
 }
 
-function calculateFinalScore() {
+function saveResults() {
+  const quizResults = JSON.parse(localStorage.getItem("quizResults")) || [];
+  const result = { correct: quizState.correctQuestions, time: Date.now() };
+  localStorage.setItem("quizResults", JSON.stringify([...quizResults, result]));
+}
+
+function calculateFinalScore(correctQuestions) {
   const difficultyPoints = {
     easy: 1,
     medium: 2,
     hard: 3,
   };
 
-  return quizState.correctQuestions.reduce(
+  return correctQuestions.reduce(
     (acc, question) => acc + difficultyPoints[question.difficulty] ?? 1,
-    0
+    0,
   );
 }
 
@@ -268,7 +293,7 @@ function startQuestionTimer() {
     },
     handleTimerExpired,
     QUESTION_DURATION,
-    100 // 10 updates per second
+    100, // 10 updates per second
   );
 
   quizState.questionTimer.interval = interval;
@@ -292,7 +317,7 @@ function setCountdown(
   updateCallback,
   doneCallback,
   durationMs = 1000,
-  intervalMs = 1000
+  intervalMs = 1000,
 ) {
   const timerStart = Date.now();
   const timerDone = timerStart + durationMs;
